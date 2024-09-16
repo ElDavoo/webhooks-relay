@@ -21,21 +21,25 @@ def catch_all(path):
     data = request.get_data()
     # Get the request method
     method = request.method
-    # Get the request URL
-    url = 'http://'+path
-    print(url)
-    # Make the request
-    try:
-        response = requests.request(method, url, headers=headers, data=data)
-    except requests.exceptions.ConnectionError:
-        # Try again on port 8080
-        url = 'http://'+path+':8080'
-        print(url)
+    # Make a list of 4 possible urls
+    urls = [
+        'http://' + path,
+        'http://' + path + ':8080',
+        'http://' + path + '/webhooks/' + path,
+        'http://' + path + ':8080/webhooks/' + path
+    ]
+    # Try all of the urls, if one of them works, break the loop
+    for url in urls:
         try:
-            response = requests.request(method, url, headers=headers, data=data)
+            response = requests.request(
+                method,
+                url,
+                headers=headers,
+                data=data
+            )
+            break
         except requests.exceptions.ConnectionError:
-            print('Connection error, probably no container named ' + path)
-            return Response('Connection error', 500)
+            continue
     # Return the response
     return Response(response.content, response.status_code, dict(response.headers))
 
