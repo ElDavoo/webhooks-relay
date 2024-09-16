@@ -17,8 +17,6 @@ def catch_all(path):
     print(path)
     # Get the request headers
     headers = dict(request.headers)
-    # Get the request data
-    data = request.json
     # Get the request method
     method = request.method
     # Make a list of 4 possible urls
@@ -31,11 +29,12 @@ def catch_all(path):
     # Try all of the urls, if one of them works, break the loop
     for url in urls:
         try:
+            # Pass the request json as it is, without touching it
             response = requests.request(
                 method,
                 url,
                 headers=headers,
-                data=data
+                data=request.data,
             )
             break
         except requests.exceptions.ConnectionError:
