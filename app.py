@@ -1,7 +1,7 @@
 # Do a very simple thing: When you get a request, you need to forward it to the
 # appropriate container, determined by URL path.
 
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 import requests
 
 app = Flask(__name__)
