@@ -34,7 +34,7 @@ def catch_all(path):
                 method,
                 url,
                 headers=headers,
-                data=request.data,
+                data=jsonify(request.json),
             )
             break
         except requests.exceptions.ConnectionError:
