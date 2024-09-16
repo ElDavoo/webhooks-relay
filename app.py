@@ -28,8 +28,14 @@ def catch_all(path):
     try:
         response = requests.request(method, url, headers=headers, data=data)
     except requests.exceptions.ConnectionError:
-        print('Connection error, probably no container named ' + path)
-        return Response('Connection error', 500)
+        # Try again on port 8080
+        url = 'http://'+path+':8080'
+        print(url)
+        try:
+            response = requests.request(method, url, headers=headers, data=data)
+        except requests.exceptions.ConnectionError:
+            print('Connection error, probably no container named ' + path)
+            return Response('Connection error', 500)
     # Return the response
     return Response(response.content, response.status_code, dict(response.headers))
 
