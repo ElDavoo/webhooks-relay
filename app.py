@@ -18,7 +18,7 @@ def catch_all(path):
     # Get the request headers
     headers = dict(request.headers)
     # Get the request data
-    data = request.get_data()
+    data = request.json
     # Get the request method
     method = request.method
     # Make a list of 4 possible urls
