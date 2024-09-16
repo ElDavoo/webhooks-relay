@@ -7,17 +7,14 @@ import requests
 app = Flask(__name__)
 
 @app.route('/', defaults={'path': ''})
-@app.route('/<path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/webhooks/<path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def catch_all(path):
     """
     Catch all requests and forward them to the appropriate container
     :param path: URL path
     :return: Response
     """
-    # Get the container name from the URL path
-    container_name = path.split('/')[0]
-    # Get the URL path, it might be empty
-    url_path = path[len(container_name):]
+    print(path)
     # Get the request headers
     headers = dict(request.headers)
     # Get the request data
@@ -25,9 +22,14 @@ def catch_all(path):
     # Get the request method
     method = request.method
     # Get the request URL
-    url = 'http://'+container_name+url_path
+    url = 'http://'+path
+    print(url)
     # Make the request
-    response = requests.request(method, url, headers=headers, data=data)
+    try:
+        response = requests.request(method, url, headers=headers, data=data)
+    except requests.exceptions.ConnectionError:
+        print('Connection error, probably no container named ' + path)
+        return Response('Connection error', 500)
     # Return the response
     return Response(response.content, response.status_code, dict(response.headers))
 
